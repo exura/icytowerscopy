@@ -99,12 +99,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cd3ad08e2caf114bb5840b44cb5c50d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  camera: {fileID: 0}
   player: {fileID: 50597938575962432}
   jumpF: 10
   playerAccel: 0.1
   maxSpeed: 20
   baseSpeed: 2
   currentSpeed: 0
+  scoreText: {fileID: 0}
 --- !u!212 &212111177371343718
 SpriteRenderer:
   m_ObjectHideFlags: 1
