@@ -22,16 +22,8 @@ public class Character : MonoBehaviour {
    
     public float maxSpeed = 20f;
     public float baseSpeed = 5f;
-    public float currentSpeed = 0f;
-
-    private int score;
+    public float currentSpeed = 0f;   
     
-   
-    public TextMeshProUGUI scoreText;
-    
-   
-    
-
     bool allowJump;
     bool wallJump;
     bool touchRightWall =false;
@@ -45,9 +37,7 @@ public class Character : MonoBehaviour {
         player = GetComponent<Rigidbody2D>();
         allowJump = false;
         wallJump = false;
-        playerAction = Event.Idle;
-        score = 0;
-                       
+        playerAction = Event.Idle;                       
         
 	}
 
@@ -58,7 +48,6 @@ public class Character : MonoBehaviour {
     }
 
     void FixedUpdate () { 
-        updateScore();
         getPlayerEvent();
         movePlayer();
         checkGameOver();
@@ -108,19 +97,6 @@ public class Character : MonoBehaviour {
         }
     }
 
-    void updateScore()
-    {
-        Vector2 position = player.position;
-        
-
-        if(position.y > (score + 1) * 2.5f)
-        {
-            score++;
-        }
-        
-        scoreText.SetText("Score: " + score.ToString()); // can also use scoreText.text = "<msg>"
-        
-    }
 
     void getPlayerEvent()
     {

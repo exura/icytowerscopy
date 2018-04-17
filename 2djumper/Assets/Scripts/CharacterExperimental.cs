@@ -23,11 +23,17 @@ public class CharacterExperimental : MonoBehaviour {
     public float baseSpeed = 6f;
     public float currentSpeed = 0f;
 
+	public int platformScore = 5;
+	public int wallScore = 10;
+	public int checkpointScore = 50;
+
+	public GameControl gc;
+
     private int boostCounter = 0;
-    private int score;
+  
     private int airBourneCounter = 0;
     
-    public TextMeshProUGUI scoreText;
+//    public TextMeshProUGUI scoreText;
     
 
     bool allowJump;
@@ -44,7 +50,7 @@ public class CharacterExperimental : MonoBehaviour {
         player = GetComponent<Rigidbody2D>();
         allowJump = false;       
         playerAction = Event.Idle;
-        score = 0;                              
+//        score = 0;                              
 	}
 
     // Update is called once per frame
@@ -55,7 +61,7 @@ public class CharacterExperimental : MonoBehaviour {
 
     void FixedUpdate()
     {
-        updateScore();
+//        updateScore();
         getPlayerEvent();             
         movePlayer();
         checkGameOver();        
@@ -69,23 +75,36 @@ public class CharacterExperimental : MonoBehaviour {
 
         if (other.gameObject.tag == "Platform"  && other.relativeVelocity.y >= 0f)
         {
+			gc.addScore (platformScore);
             grounded = true; 
             allowJump = true;
         }
 
         if(other.gameObject.tag =="Left Wall")
         {
+		   gc.addScore (wallScore);	
            touchLeftWall = true;
            
         }
 
         if(other.gameObject.tag =="Right Wall")
         {
+		   gc.addScore (wallScore);
            touchRightWall = true;
-           
         }
 
+		if (other.gameObject.tag == "Checkpoint" && other.relativeVelocity.y >= 0f) {
+			grounded = true;
+			allowJump = true;
+		}
+
     }
+
+	private void OnTriggerEnter2D(Collider2D other) { // Need to do as trigger since it should be enough to just pass it, not land on it.
+		if (other.gameObject.tag == "Checkpoint") {
+			gc.addScore (checkpointScore);
+		}
+	}
 
     private void OnCollisionExit2D(Collision2D other)
     {
@@ -96,6 +115,7 @@ public class CharacterExperimental : MonoBehaviour {
         }
         if (other.gameObject.tag == "Left Wall")
         {
+			
             touchLeftWall = false;
             
         }
@@ -105,19 +125,6 @@ public class CharacterExperimental : MonoBehaviour {
             touchRightWall = false;
             
         }
-    }
-
-    void updateScore()
-    {
-        Vector2 position = player.position;
-        
-
-        if(position.y > (score + 1) * 2.5f)
-        {
-            score++;
-        }
-        
-        scoreText.SetText("Score: " + score.ToString()); // can also use scoreText.text = "<msg>"        
     }
 
     void getPlayerEvent()
