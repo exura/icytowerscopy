@@ -7,11 +7,11 @@ using TMPro; //textmeshpro stuff
 
 public class GameControl : MonoBehaviour {
 
-	public Text gameOverText;
+
 	private int score = -50;
 	public Rigidbody2D player;
 
-	public TextMeshProUGUI scoreText;
+	public TextMeshProUGUI scoreText, gameOverText;
 
 	// Use this for initialization
 	void Start () {

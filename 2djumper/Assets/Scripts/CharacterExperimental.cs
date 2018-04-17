@@ -32,8 +32,10 @@ public class CharacterExperimental : MonoBehaviour {
     private int boostCounter = 0;
   
     private int airBourneCounter = 0;
+
+	private Camera cam;
     
-//    public TextMeshProUGUI scoreText;
+
     
 
     bool allowJump;
@@ -50,21 +52,25 @@ public class CharacterExperimental : MonoBehaviour {
         player = GetComponent<Rigidbody2D>();
         allowJump = false;       
         playerAction = Event.Idle;
-//        score = 0;                              
+                             
 	}
 
     // Update is called once per frame
     private void Update()
     {
-        
+		Vector3 pos = Camera.main.WorldToViewportPoint (player.position);
+
+		if (pos.y < 0) {
+			gc.PlayerDied();
+		}
     }
 
     void FixedUpdate()
     {
-//        updateScore();
+
         getPlayerEvent();             
         movePlayer();
-        checkGameOver();        
+//        checkGameOver();        
     }
         
     
@@ -275,14 +281,14 @@ public class CharacterExperimental : MonoBehaviour {
 
     }
 
-    void checkGameOver()
-    {
-        if(camera.transform.position.y > player.position.y + 9f)
-        {            
-            //Destroy(gameObject); //destroys the game object this script is attached to
-            SceneManager.LoadScene(0);
-        }
-    }
+//    void checkGameOver()
+//    {
+//        if(camera.transform.position.y > player.position.y + 9f)
+//        {            
+//            //Destroy(gameObject); //destroys the game object this script is attached to
+//            SceneManager.LoadScene(0);
+//        }
+//    }
 }
 
    
