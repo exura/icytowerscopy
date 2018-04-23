@@ -16,22 +16,26 @@ public class PlayerController : MonoBehaviour {
 	public GameObject gameCamera;
 	public Rigidbody2D player;
 	public float jumpF = 12f; //jump force
-	public float baseSpeed = 6f; //maximum 
+	public float groundSpeed = 6f; 
+	public float airSpeed = 3f; //PREPARED FOR  WHEN WE IMPLEMENT AIR MOVEMENT
 	public float friction = 0.7f;
 	public TextMeshProUGUI scoreText;
 	public GameControl gc;
 	public int platformScore = 5;
 	public int wallScore = 10;
 	public int checkpointScore = 50;
+	public int bounceTime = 20;
 
 	//private declarations
 	private int boostCounter = 0;
 	private int speedBoost = 100; // if counter above we will increase speed
 	private int score = 0;
+	private int bounceCounter = 0;
 	private bool touchRightWall =false;
 	private bool touchLeftWall = false;
 	private bool grounded = false;
 	private bool speedBoostActive = false;
+	private bool bounce = false;
 
 	void Start (){
 		//initialize the player and get its rigidbody
@@ -44,20 +48,28 @@ public class PlayerController : MonoBehaviour {
 
 	void FixedUpdate(){		
 		//Handle user inputs
-		getPlayerEvent();    
-		//Update character based on inputs
-		movePlayer();
-		//Check for if player fell off the screen
-		checkGameOver();    
+		if (!bounce) {
+			getPlayerEvent (); 
+			checkPlayerSpeedBoost ();
+		 	movePlayer (groundSpeed);
+			checkGameOver (); 
+		} else if (bounce) {
+			resolveBounce ();
+		}
+
 	}
-		
 
-
+	void resolveBounce(){		
+		bounceCounter++;
+		if (bounceCounter > bounceTime || grounded) { //stop bounce if player on platform
+			bounce = false;
+			bounceCounter = 0;
+		}
+	}
+	
 	void getPlayerEvent(){
 		//movement left to right or idle
 		previousPlayerStatus = playerStatus;
-
-
 		if (Input.GetAxis ("Horizontal") > 0) {
 			if (touchRightWall) {
 				playerStatus = PlayerStatus.RightWall;
@@ -67,57 +79,67 @@ public class PlayerController : MonoBehaviour {
 		} else if (Input.GetAxis ("Horizontal") < 0) {
 			if (touchLeftWall) {
 				playerStatus = PlayerStatus.LeftWall;
-			} else {
+			} else  {
 				playerStatus = PlayerStatus.RunLeft;
 			}
-		} 
-
-		if(Input.GetAxis ("Horizontal") == 0) {
+		} else{				
 			playerStatus = PlayerStatus.Idle;
 		}
-
 		//jumping
-		if (Input.GetKey(KeyCode.Space) && grounded)
-		{
-			print ("jumped");
+		if (Input.GetKey(KeyCode.Space) && grounded){			
 			playerStatus = PlayerStatus.Jumped;
 		}
 	}
 
-	void movePlayer(){
-		//read the player velocity
-		Vector2 velocity = player.velocity; 
-		checkPlayerSpeedBoost ();
-
+	void movePlayer(float speed){
+		//read player velocity
+		Vector2 velocity = player.velocity;
+		//horizontal movement
 		if(playerStatus == PlayerStatus.Idle){			
 			velocity.x = 0; //handles slowing down
 		}
-		if(playerStatus == PlayerStatus.RunRight){			
+		if(playerStatus == PlayerStatus.RunRight && !bounce){			
 			if (speedBoostActive) {
-				velocity.x = 2 * baseSpeed;
+				velocity.x = 2 * speed;
 			} else {
-				velocity.x = baseSpeed;
+				velocity.x = speed;
 			}
-		}else if(playerStatus == PlayerStatus.RunLeft){
+		}else if(playerStatus == PlayerStatus.RunLeft && !bounce){
 			if (speedBoostActive) {
-				velocity.x = -2 * baseSpeed;
+				velocity.x = -2 * speed;
 			} else {
-				velocity.x = -baseSpeed;
+				velocity.x = -speed;
 			}
 		}
-		if(playerStatus == PlayerStatus.Jumped){
-			float jumpMultiplier = Mathf.Abs(velocity.x);
+		//bounce
+		if (playerStatus == PlayerStatus.RightWall) {
+			bounce = true;
+			velocity.x = -1.3f * speed;
+			//resolve player status (continuing the momentum)
+			previousPlayerStatus = playerStatus;
+			playerStatus = PlayerStatus.RunLeft;
+		} else if (playerStatus == PlayerStatus.LeftWall) {
+			bounce = true;
+			velocity.x = 1.3f * speed;
+			//resolve player status (continuing the momentum)
+			previousPlayerStatus = playerStatus;
+			playerStatus = PlayerStatus.RunRight;
+		}
+		//jump
+		if(playerStatus == PlayerStatus.Jumped && grounded){
+			float jumpMultiplier = Mathf.Abs(velocity.x) * 1.5f;
 			velocity.y = jumpF + jumpMultiplier;
 		}  
-		//update the player velocity
+		//update player velocity
 		player.velocity = velocity;      
 	}
 
 	void checkPlayerSpeedBoost(){		
-		if ((playerStatus == PlayerStatus.RunRight && previousPlayerStatus == PlayerStatus.RunLeft) || (playerStatus == PlayerStatus.RunLeft && previousPlayerStatus == PlayerStatus.RunRight)) {			
+		if ((playerStatus == PlayerStatus.RunRight && previousPlayerStatus == PlayerStatus.RunLeft) ||
+			(playerStatus == PlayerStatus.RunLeft && previousPlayerStatus == PlayerStatus.RunRight) ||
+			playerStatus == PlayerStatus.Idle) {			
 			boostCounter = 0;
-		} 
-		print (speedBoostActive);
+		} 	
 		boostCounter++;	
 		speedBoostActive = (boostCounter > speedBoost);
 	}
@@ -128,6 +150,7 @@ public class PlayerController : MonoBehaviour {
 			gc.PlayerDied();
 		}
 	}
+
 	//executes ONCE when entering a collision with another object
 	private void OnCollisionEnter2D(Collision2D other){
 		Rigidbody2D rb = other.collider.GetComponent<Rigidbody2D>();
@@ -165,17 +188,3 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 }
-
-
-
-/*unused functions
-	void updateScore()	{
-		Vector2 position = player.position;
-		float platformDistance = 2.5f; //distance between platforms as found in LevelGenerator
-		float nextPlatformPosition = (score + 1) * platformDistance;
-		if(position.y > nextPlatformPosition){ 
-			score++;
-		}
-		scoreText.SetText("Score: " + score.ToString());      
-	}
-*/

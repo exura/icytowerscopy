@@ -58,13 +58,13 @@ public class LevelGenerator : MonoBehaviour {
         }
 
        //instantiate the first walls 
-       for(int i = 0; i < 2; i++)
+       for(int i = 0; i < 3; i++)
         {
             createWalls();          
         }
 
        //instantiating the first backgrounds
-        for(int i = 0; i <2; i++ ){
+        for(int i = 0; i <3; i++ ){
             createBackground();
         }
         
@@ -79,7 +79,7 @@ public class LevelGenerator : MonoBehaviour {
 
         Vector2 platform = platforms[0].transform.position;
 
-        if(player.position.y > platform.y + screenHeight)
+        if(player.position.y > platform.y + 2 * screenHeight)
         {
             //Generate new platforms
             Destroy(platforms[0]);
@@ -89,7 +89,7 @@ public class LevelGenerator : MonoBehaviour {
 
         Vector2 wallPosition = walls[0].transform.position;
 		
-        if(player.position.y > wallPosition.y + screenHeight * 2)
+        if(player.position.y > wallPosition.y + screenHeight * 3)
         {
             //generate new walls
             Destroy(walls[0]);
@@ -100,7 +100,7 @@ public class LevelGenerator : MonoBehaviour {
         }
 
         Vector2 backgroundPosition = backgrounds[0].transform.position;
-        if (player.position.y > backgroundPosition.y + 2*screenHeight)
+        if (player.position.y > backgroundPosition.y + 3 * screenHeight)
         {
             Destroy(backgrounds[0]);
             backgrounds.RemoveAt(0);
