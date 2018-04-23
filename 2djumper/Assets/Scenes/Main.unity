@@ -753,7 +753,7 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1887383934}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 23c0586f1da5cc546b12075520105cc6, type: 3}
   m_Name: 
@@ -774,6 +774,27 @@ Rigidbody2D:
   m_PrefabParentObject: {fileID: 50597938575962432, guid: 0c6385bd4b60024438e4fab62877592f,
     type: 2}
   m_PrefabInternal: {fileID: 1095411464}
+--- !u!114 &1887383940
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1887383934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a7d3d513a37a95e45a07be57252d0da9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameCamera: {fileID: 1810248723}
+  player: {fileID: 0}
+  jumpF: 12
+  baseSpeed: 6
+  friction: 0.7
+  scoreText: {fileID: 1823130392}
+  gc: {fileID: 530804614}
+  platformScore: 5
+  wallScore: 10
+  checkpointScore: 50
 --- !u!1 &2068907736
 GameObject:
   m_ObjectHideFlags: 0
