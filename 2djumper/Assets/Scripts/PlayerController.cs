@@ -174,10 +174,12 @@ public class PlayerController : MonoBehaviour {
 		if (other.gameObject.tag == "Left Wall"){
 			touchLeftWall = false;
 			gc.addScore(wallScore);
+			gc.bonusTimer (true);
 		}
 		if (other.gameObject.tag == "Right Wall"){
 			touchRightWall = false;
 			gc.addScore (wallScore);
+			gc.bonusTimer (true);
 		}
 	}
 		
