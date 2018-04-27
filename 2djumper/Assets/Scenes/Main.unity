@@ -578,12 +578,12 @@ Prefab:
     - target: {fileID: 61926917280018036, guid: 0c6385bd4b60024438e4fab62877592f,
         type: 2}
       propertyPath: m_Offset.y
-      value: -0.6342947
+      value: -0.8038303
       objectReference: {fileID: 0}
     - target: {fileID: 61926917280018036, guid: 0c6385bd4b60024438e4fab62877592f,
         type: 2}
       propertyPath: m_Size.y
-      value: 0.5915164
+      value: 0.2524451
       objectReference: {fileID: 0}
     - target: {fileID: 114302771176562490, guid: 0c6385bd4b60024438e4fab62877592f,
         type: 2}
@@ -928,10 +928,10 @@ RectTransform:
   m_Father: {fileID: 1394332675}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 634.6, y: 1872.5}
-  m_SizeDelta: {x: -1072.6, y: -583}
+  m_AnchorMin: {x: 0, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
+  m_AnchoredPosition: {x: -200, y: -2653.2007}
+  m_SizeDelta: {x: 1390, y: 748.00006}
   m_Pivot: {x: -0.45593464, y: -2.5203216}
 --- !u!114 &1823130392
 MonoBehaviour:
@@ -998,7 +998,7 @@ MonoBehaviour:
   m_enableWordWrapping: 1
   m_wordWrappingRatios: 0.4
   m_overflowMode: 0
-  m_firstOverflowCharacterIndex: 0
+  m_firstOverflowCharacterIndex: -1
   m_linkedTextComponent: {fileID: 0}
   m_isLinkedTextComponent: 0
   m_enableKerning: 1
