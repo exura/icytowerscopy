@@ -1095,7 +1095,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a7d3d513a37a95e45a07be57252d0da9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameCamera: {fileID: 1810248723}
+  gameCamera: {fileID: 530804613}
   player: {fileID: 0}
   jumpF: 12
   groundSpeed: 6
@@ -1106,7 +1106,7 @@ MonoBehaviour:
   platformScore: 5
   wallScore: 10
   checkpointScore: 50
-  bounceTime: 20
+  bounceTime: 1
 --- !u!1 &2068907736
 GameObject:
   m_ObjectHideFlags: 0

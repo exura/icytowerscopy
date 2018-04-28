@@ -7,8 +7,19 @@ using TMPro; //textmeshpro stuff
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerController : MonoBehaviour {
+	//struct
+	public struct CollisionInfo{
+		public bool leftWall, rightWall, ground;
+
+		public void reset(){
+			leftWall = false;
+			rightWall = false;
+			ground = false;
+		}
+	}
+	public CollisionInfo collisionInfo;
 	//enumration class
-	enum PlayerStatus {RunLeft, RunRight, LeftWall, RightWall, Jumped, Idle};
+	enum PlayerStatus {RunLeft, RunRight, Jumped, Idle};
 	private PlayerStatus playerStatus;
 	private PlayerStatus previousPlayerStatus;
 
@@ -24,22 +35,22 @@ public class PlayerController : MonoBehaviour {
 	public int platformScore = 5;
 	public int wallScore = 10;
 	public int checkpointScore = 50;
-	public int bounceTime = 20;
+	public float bounceTime = 1f;
 
 	//private declarations
 	private int boostCounter = 0;
 	private int speedBoost = 100; // if counter above we will increase speed
 	private int score = 0;
-	private int bounceCounter = 0;
-	private bool touchRightWall =false;
-	private bool touchLeftWall = false;
-	private bool grounded = false;
-	private bool speedBoostActive = false;
+	private float bounceCounter = 0;
 	private bool bounce = false;
+
+	private bool speedBoostActive = false;
+
 
 	void Start (){
 		//initialize the player and get its rigidbody
-		player = GetComponent<Rigidbody2D>();		       
+		player = GetComponent<Rigidbody2D>();
+		collisionInfo.reset();
 		playerStatus = PlayerStatus.Idle;
 		previousPlayerStatus = playerStatus;
 	}
@@ -60,8 +71,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void resolveBounce(){		
-		bounceCounter++;
-		if (bounceCounter > bounceTime || grounded) { //stop bounce if player on platform
+		bounceCounter+= Time.deltaTime;
+		if (bounceCounter > bounceTime || collisionInfo.ground) { //stop bounce if player on platform
 			bounce = false;
 			bounceCounter = 0;
 		}
@@ -70,23 +81,15 @@ public class PlayerController : MonoBehaviour {
 	void getPlayerEvent(){
 		//movement left to right or idle
 		previousPlayerStatus = playerStatus;
-		if (Input.GetAxis ("Horizontal") > 0) {
-			if (touchRightWall) {
-				playerStatus = PlayerStatus.RightWall;
-			} else {
-				playerStatus = PlayerStatus.RunRight;
-			}
-		} else if (Input.GetAxis ("Horizontal") < 0) {
-			if (touchLeftWall) {
-				playerStatus = PlayerStatus.LeftWall;
-			} else  {
-				playerStatus = PlayerStatus.RunLeft;
-			}
+		if (Input.GetAxisRaw("Horizontal") > 0) {			
+			playerStatus = PlayerStatus.RunRight;
+		} else if (Input.GetAxisRaw("Horizontal") < 0) {
+			playerStatus = PlayerStatus.RunLeft;
 		} else{				
 			playerStatus = PlayerStatus.Idle;
 		}
 		//jumping
-		if (Input.GetKey(KeyCode.Space) && grounded){			
+		if (Input.GetKey(KeyCode.Space) && collisionInfo.ground){			
 			playerStatus = PlayerStatus.Jumped;
 		}
 	}
@@ -112,21 +115,21 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 		//bounce
-		if (playerStatus == PlayerStatus.RightWall) {
+		if (collisionInfo.rightWall) {
 			bounce = true;
 			velocity.x = -1.3f * speed;
 			//resolve player status (continuing the momentum)
-			previousPlayerStatus = playerStatus;
 			playerStatus = PlayerStatus.RunLeft;
-		} else if (playerStatus == PlayerStatus.LeftWall) {
+			previousPlayerStatus = playerStatus;
+		} else if (collisionInfo.leftWall) {
 			bounce = true;
 			velocity.x = 1.3f * speed;
 			//resolve player status (continuing the momentum)
-			previousPlayerStatus = playerStatus;
 			playerStatus = PlayerStatus.RunRight;
+			previousPlayerStatus = playerStatus;
 		}
 		//jump
-		if(playerStatus == PlayerStatus.Jumped && grounded){
+		if(playerStatus == PlayerStatus.Jumped && collisionInfo.ground){
 			float jumpMultiplier = Mathf.Abs(velocity.x) * 1.5f;
 			velocity.y = jumpF + jumpMultiplier;
 		}  
@@ -155,32 +158,35 @@ public class PlayerController : MonoBehaviour {
 	private void OnCollisionEnter2D(Collision2D other){
 		Rigidbody2D rb = other.collider.GetComponent<Rigidbody2D>();
 		if ((other.gameObject.tag == "Platform" || other.gameObject.tag == "Checkpoint")  && other.relativeVelocity.y >= 0f){
-			grounded = true; 
+			collisionInfo.ground = true; 
 		}
 		if(other.gameObject.tag =="Left Wall"){			
-			touchLeftWall = true;
+			collisionInfo.leftWall = true;
 		}
 		if(other.gameObject.tag =="Right Wall"){
-			touchRightWall = true;
+			collisionInfo.rightWall = true;
 		}
 	}
 		
 	//executes ONCE when exiting a collision with another object
 	private void OnCollisionExit2D(Collision2D other){
-		if ((other.gameObject.tag == "Platform" || other.gameObject.tag == "Checkpoint") && other.relativeVelocity.y >= 0f){
-			grounded = false;
+		if ((other.gameObject.tag == "Platform" || other.gameObject.tag == "Checkpoint") && other.relativeVelocity.y >= 0f){			
 			gc.addScore(platformScore);
+			collisionInfo.ground = false;
 		}
 		if (other.gameObject.tag == "Left Wall"){
-			touchLeftWall = false;
+			boostCounter += 40;
 			gc.addScore(wallScore);
 			gc.bonusTimer (true);
+			collisionInfo.leftWall = false;
 		}
 		if (other.gameObject.tag == "Right Wall"){
-			touchRightWall = false;
-			gc.addScore (wallScore);
+			boostCounter += 40;
+			gc.addScore(wallScore);
 			gc.bonusTimer (true);
+			collisionInfo.rightWall = false;
 		}
+
 	}
 		
 	// Need to do as trigger since it should be enough to just pass it, not land on it.
@@ -189,4 +195,5 @@ public class PlayerController : MonoBehaviour {
 			gc.addScore (checkpointScore);
 		}
 	}
+
 }
