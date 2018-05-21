@@ -13,7 +13,8 @@ public class GameControl : MonoBehaviour {
 
 	public TextMeshProUGUI scoreText, gameOverText, bonusText, timerText;
 
-	private int multiplier = 1; //To be used when we implement bonus
+	private int timesHitWall = 0; //To be used when we implement bonus
+	private int bonusTransformation = 1;
 
 	private float bonusTime = 0.0f;
 
@@ -50,31 +51,37 @@ public class GameControl : MonoBehaviour {
 
 
 	public void addScore (int pnts) {
+		// first add score
+		score = score + pnts * bonusTransformation;
+
+		// then write to text
 		scoreText.SetText("Score:" + score.ToString()); // can also use scoreText.text = "<msg>"
-
-
-		score = score + pnts * multiplier;
-//		scoreText.text = "Score: " + score.ToString ();
 	}
 
 	public void bonusTimer (bool flag) { // Flag = 0 / 1 , if 1 timer for bonus starts. Can be called at each restart.
 
 		if (flag == true) {
 			bonusTime = 3;
-			multiplier = multiplier*2; // Doubling multiplier everytime a wall is hit during bonus
-			changeBonusText(multiplier);
+			timesHitWall += 1; // Doubling multiplier everytime a wall is hit during bonus
+			changeBonus(timesHitWall);
+			changeBonusText(timesHitWall);
 		}
 
 		if (flag == false) {
-			multiplier = 1;
+			timesHitWall = 0;
+			changeBonus(timesHitWall);
 		}
 
+	}
+
+	private void changeBonus(int multiplier) {
+		bonusTransformation = Mathf.RoundToInt (Mathf.Log (multiplier+ 1));
 	}
 
 	private void changeBonusText(int bonusValue) {
 		bonusText.enabled = true;
 		timerText.enabled = true;
-		bonusText.SetText("Bonus! " + multiplier.ToString() + "X!");
+		bonusText.SetText("Bonus! " + bonusTransformation.ToString() + "X!");
 
 	}
 
