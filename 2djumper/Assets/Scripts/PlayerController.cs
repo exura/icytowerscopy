@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour {
 	private int boostCounter = 0;
 	private int speedBoost = 100; // if counter above we will increase speed
 	private int score = 0;
+	private int life = 3;
 	private float bounceCounter = 0;
 	private bool bounce = false;
 
@@ -149,8 +150,17 @@ public class PlayerController : MonoBehaviour {
 
 	void checkGameOver(){
 		Vector3 pos = Camera.main.WorldToViewportPoint (player.position);
+		print (pos);
 		if (pos.y < 0) {
-			gc.PlayerDied();
+			life--;
+			if (life <= 0) {
+				gc.PlayerDied ();
+			} else {
+				print (life);
+				Vector2 position = player.position;
+				position.y = position.y + 10f;
+				player.position = position;
+			}
 		}
 	}
 
