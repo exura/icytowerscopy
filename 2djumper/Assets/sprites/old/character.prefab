@@ -106,7 +106,6 @@ MonoBehaviour:
   maxSpeed: 20
   baseSpeed: 2
   currentSpeed: 0
-  scoreText: {fileID: 0}
 --- !u!212 &212111177371343718
 SpriteRenderer:
   m_ObjectHideFlags: 1
