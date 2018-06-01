@@ -44,6 +44,8 @@ public class PlayerController : MonoBehaviour {
 	private int life = 3;
 	private float bounceCounter = 0;
 	private bool bounce = false;
+	private Animator anim;
+	private SpriteRenderer spriteRenderer;
 
 	private bool speedBoostActive = false;
 
@@ -51,6 +53,9 @@ public class PlayerController : MonoBehaviour {
 	void Start (){
 		//initialize the player and get its rigidbody
 		player = GetComponent<Rigidbody2D>();
+		anim = GetComponent<Animator>();
+		spriteRenderer = GetComponent<SpriteRenderer>();
+
 		collisionInfo.reset();
 		playerStatus = PlayerStatus.Idle;
 		previousPlayerStatus = playerStatus;
@@ -60,6 +65,7 @@ public class PlayerController : MonoBehaviour {
 
 	void FixedUpdate(){		
 		//Handle user inputs
+		animationHandler();
 		if (!bounce) {
 			getPlayerEvent (); 
 			checkPlayerSpeedBoost ();
@@ -68,6 +74,7 @@ public class PlayerController : MonoBehaviour {
 		} else if (bounce) {
 			resolveBounce ();
 		}
+
 
 	}
 
@@ -150,7 +157,6 @@ public class PlayerController : MonoBehaviour {
 
 	void checkGameOver(){
 		Vector3 pos = Camera.main.WorldToViewportPoint (player.position);
-		print (pos);
 		if (pos.y < 0) {
 			life--;
 			if (life <= 0) {
@@ -204,6 +210,42 @@ public class PlayerController : MonoBehaviour {
 		if (other.gameObject.tag == "Checkpoint") {
 			gc.addScore (checkpointScore);
 		}
+	}
+
+	void animationHandler(){
+
+
+		if(playerStatus == PlayerStatus.Idle && collisionInfo.ground){
+			anim.SetInteger("PlayerState",0);
+		}
+
+		if(playerStatus == PlayerStatus.RunLeft && collisionInfo.ground){
+			anim.SetInteger("PlayerState", 2);
+			spriteRenderer.flipX = false;
+
+		}
+
+		if(playerStatus == PlayerStatus.RunRight && collisionInfo.ground){
+			anim.SetInteger("PlayerState", 2);
+			spriteRenderer.flipX = true;
+		}
+
+		if(!collisionInfo.ground){
+
+			if(player.velocity.x > 0 ){
+				anim.SetInteger("PlayerState", 1);
+				spriteRenderer.flipX = true;
+			}else if(player.velocity.x < 0){
+				anim.SetInteger("PlayerState", 1);
+				spriteRenderer.flipX = false;
+			}else{
+				anim.SetInteger("PlayerState", 0);
+			}
+
+		}
+
+
+
 	}
 
 }
